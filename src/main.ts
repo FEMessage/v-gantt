@@ -1,8 +1,10 @@
-import Vue from "vue";
-import App from "./App.vue";
+import { PluginFunction } from 'vue'
+import Component from './index.vue'
 
-Vue.config.productionTip = false;
+// @ts-ignore
+Component.install = ((vue) => {
+  // @ts-ignore
+  vue.component(Component.options.name, Component)
+}) as PluginFunction<undefined>
 
-new Vue({
-  render: h => h(App)
-}).$mount("#app");
+export default Component

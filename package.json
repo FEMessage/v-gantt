@@ -1,13 +1,17 @@
 {
   "name": "v-gantt",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.5",
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "vue-cli-service build --target lib src/main.ts",
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint"
   },
+  "main": "dist/v-gantt.umd.js",
+  "files": [
+    "src",
+    "dist"
+  ],
   "dependencies": {
     "vue": "^2.6.11"
   },
