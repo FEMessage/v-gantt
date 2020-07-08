@@ -1,6 +1,7 @@
 {
   "name": "v-gantt",
-  "version": "0.1.6",
+  "version": "0.1.9",
+  "license": "MIT",
   "scripts": {
     "dev": "yarn styleguide",
     "build": "vue-cli-service build --target lib src/main.ts",
