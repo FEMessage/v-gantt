@@ -1,7 +1,22 @@
 {
-  "name": "v-gantt",
+  "name": "@femessage/v-gantt",
   "version": "0.1.10",
+  "description": "vue gantt component",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/FEMessage/v-gantt.git"
+  },
+  "contributors": [
+    "https://github.com/FEMessage"
+  ],
+  "keywords": [
+    "vue",
+    "element",
+    "gantt",
+    "component"
+  ],
+  "homepage": "https://github.com/FEMessage/v-gantt",
   "scripts": {
     "dev": "yarn styleguide",
     "build": "vue-cli-service build --target lib src/main.ts",
