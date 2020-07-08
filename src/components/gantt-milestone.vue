@@ -5,8 +5,11 @@
     @click.stop="$emit('focus-start')"
   >
     <div v-if="data.done" class="content done">
-      <!-- FIXME: 应该内联进来 -->
-      <img class="icon" src="@/assets/check.svg" draggable="false" />
+      <svg class="icon" viewBox="0 0 16 16" fill="white">
+        <path
+          d="M5.536 11.175L2 7.639l1.497-1.497L7 9.642l6-6.28 1.497 1.497-7.464 7.814-1.497-1.497z"
+        ></path>
+      </svg>
     </div>
     <div v-else class="content"></div>
     <div class="name" :title="data.name">{{ data.name }}</div>
@@ -51,6 +54,7 @@ export default Vue.extend({
 
       .icon {
         transform: rotate(-45deg);
+        width: 12px;
       }
     }
   }
