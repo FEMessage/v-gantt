@@ -1,6 +1,6 @@
 {
   "name": "v-gantt",
-  "version": "0.1.9",
+  "version": "0.1.10",
   "license": "MIT",
   "scripts": {
     "dev": "yarn styleguide",
@@ -11,7 +11,7 @@
     "styleguide:build": "vue-cli-service styleguidist:build",
     "inspect": "vue-cli-service inspect > webpack.config.js"
   },
-  "main": "dist/v-gantt.umd.js",
+  "main": "dist/v-gantt.umd.min.js",
   "files": [
     "src",
     "dist"
@@ -43,7 +43,6 @@
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
     "prettier": "^1.19.1",
-    "svg-inline-loader": "^0.8.2",
     "typescript": "~3.9.3",
     "vue-cli-plugin-styleguidist": "^4.26.0",
     "vue-template-compiler": "^2.6.11"
