@@ -7,6 +7,7 @@ module.exports = {
   ribbon: {
     url: 'https://github.com/FEMessage/v-gantt',
   },
+  require: ['./styleguide.config.extra.js'],
   sections: [
     {
       name: 'Components',
