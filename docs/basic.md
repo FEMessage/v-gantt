@@ -4,14 +4,14 @@
 2. 整体拖拽甘特图节点
 3. 拖拽甘特图节点右侧，可以更改持续时间
 4. 点击【今天】按钮，快速跳转到今天列
-5. 点击【天】按钮，可切换至【周】视图
+5. 点击【天】按钮，可切换至【周】视图（可配置默认视图）
 6. 点击树节点，跳转到该甘特图节点
 7. 点击里程碑线🧵，跳转到里程碑行
 8. 通过公共 api 获取中国节假日信息
 
 ```vue
 <template>
-  <v-gantt style="height: 400px" :data.sync="data" />
+  <v-gantt style="height: 400px" :data.sync="data" :view.sync="view" />
 </template>
 
 <script>
@@ -21,6 +21,7 @@ export default {
     const m = `${new Date().getMonth() + 1}`.padStart(2, 0)
     const d = date => `${y}-${m}-${date}`
     return {
+      view: 'day',
       data: [
         {
           id: 'group-1',
