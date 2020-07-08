@@ -113,14 +113,23 @@ export default Vue.extend({
   name: 'VGantt',
   components: { GanttTree, GanttChart },
   props: {
+    /**
+     * 行高
+     */
     rowH: {
       type: Number,
       default: 30,
     },
+    /**
+     * 列宽
+     */
     colW: {
       type: Number,
       default: 80,
     },
+    /**
+     * 甘特图数据
+     */
     data: {
       type: Array as PropType<GanttPropData>,
       required: true,
@@ -206,9 +215,16 @@ export default Vue.extend({
       ]
       // 删除该节点
       this.deleteNode(node, parent, newData)
+      /**
+       * 支持通过 data.sync 同步数据
+       * @property {GanttPropData} data - 新的 data
+       */
       this.$emit('update:data', newData)
       // 如果没有监听事件，直接 done，否则由外部控制何时关闭弹窗
       if (this.$listeners.delete) {
+        /**
+         * 节点删除事件（开发中）
+         */
         this.$emit('delete', { id, done })
       } else {
         done()
@@ -275,6 +291,9 @@ export default Vue.extend({
       this.$emit('update:data', newData)
       // 如果没有监听事件，直接 done，否则由外部控制何时关闭弹窗
       if (this.$listeners.move) {
+        /**
+         * 在树中拖拽节点事件（开发中）
+         */
         this.$emit('move', { node, parent, done })
       } else {
         done()
@@ -306,6 +325,11 @@ export default Vue.extend({
       loop(root)
 
       this.$emit('update:data', newData)
+      /**
+       * 甘特图节点左右横移事件
+       * @property {GanttPropNode} node - 被移动的节点
+       * @property {number} movedDays - 移动的天数
+       */
       this.$emit('dragged', { node: root, movedDays: movedCols })
     },
     onResizeStart({ id }: { id: GanttItem['id'] }) {
@@ -324,13 +348,19 @@ export default Vue.extend({
       root.endDate = dayjs.$add(root.endDate, resizedCols)
 
       this.$emit('update:data', newData)
-      this.$emit('resized', { node: root })
+      /**
+       * 甘特图节点拉伸事件
+       * @property {GanttPropNode} node - 被拉伸的节点
+       * @property {number} resizedDays - 拉伸的天数
+       */
+      this.$emit('resized', { node: root, resizedDays: resizedCols })
     },
   },
 })
 </script>
 <style lang="less" scoped>
 .v-gantt {
+  min-height: 300px;
   display: flex;
 
   .gantt-tree {

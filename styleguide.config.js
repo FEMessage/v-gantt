@@ -3,6 +3,8 @@ const path = require('path')
 const glob = require('glob')
 
 module.exports = {
+  title: 'v-gantt 文档',
+  version: require('./package.json').version,
   pagePerSection: true,
   ribbon: {
     url: 'https://github.com/FEMessage/v-gantt',
@@ -12,6 +14,7 @@ module.exports = {
     {
       name: 'Components',
       components: 'src/index.vue',
+      usageMode: 'expand',
     },
     {
       name: 'Demo',

@@ -389,6 +389,7 @@ export default Vue.extend({
     },
     dates: {
       handler(range: string[]) {
+        // FIXME: 持续时间不会跨三年吧
         const startYear = dayjs(range[0]).year() // undefined 则是今年
         this.getWeekdays(startYear)
         const endYear = dayjs(range[range.length - 1]).year()
