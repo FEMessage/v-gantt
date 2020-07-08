@@ -7,7 +7,8 @@
     "test:unit": "vue-cli-service test:unit",
     "lint": "vue-cli-service lint",
     "styleguide": "vue-cli-service styleguidist",
-    "styleguide:build": "vue-cli-service styleguidist:build"
+    "styleguide:build": "vue-cli-service styleguidist:build",
+    "inspect": "vue-cli-service inspect > webpack.config.js"
   },
   "main": "dist/v-gantt.umd.js",
   "files": [
@@ -41,6 +42,7 @@
     "less": "^3.0.4",
     "less-loader": "^5.0.0",
     "prettier": "^1.19.1",
+    "svg-inline-loader": "^0.8.2",
     "typescript": "~3.9.3",
     "vue-cli-plugin-styleguidist": "^4.26.0",
     "vue-template-compiler": "^2.6.11"
