@@ -20,7 +20,10 @@ import GanttProgress from './gantt-progress.vue'
 
 export default Vue.extend({
   name: 'GanttGroup',
-  components: { GanttProgress },
+  components: {
+    GanttProgress,
+    GanttLayout: () => import('./gantt-layout.vue'),
+  },
   props: {
     data: {
       type: Object as PropType<GanttLayoutGroup>,
@@ -47,9 +50,6 @@ export default Vue.extend({
         bottom: half,
       }
     },
-  },
-  beforeCreate() {
-    this.$options.components!.GanttLayout = require('./gantt-layout.vue').default
   },
 })
 </script>
