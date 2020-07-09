@@ -9,8 +9,6 @@
 
 ![image.png](https://i.loli.net/2020/07/09/SoyCaBGfpNvJP1m.png)
 
-[中文文档](./README-zh.md)
-
 ## Table of Contents
 
 - [Introduction](#introduction)
@@ -26,20 +24,20 @@
 
 ## Introduction
 
-Base on vue + element-ui, create web version omniplan。[docs](https://femssage.github.io/v-gantt)
+甘特图组件。基于 vue + element-ui，打造 web 版 omniplan。[在线文档](https://femssage.github.io/v-gantt)
 
 [⬆ Back to Top](#table-of-contents)
 
 ## Feature
 
-1. fold & collapse tree node
-2. drag gantt node to modify dates
-3. drag to modify duration
-4. jump to 'today'
-5. col unit base on days or weeks
-6. click tree node to jump to gantt node
-7. click milestone's line to jump to milestone node
-8. get chinese festivals by public-api
+1. 折叠、展开树节点
+2. 整体拖拽甘特图节点
+3. 拖拽甘特图节点右侧，可以更改持续时间
+4. 点击【今天】按钮，快速跳转到今天列
+5. 点击【天】按钮，可切换至【周】视图（可配置默认视图）
+6. 点击树节点，跳转到该甘特图节点
+7. 点击里程碑线，跳转到里程碑行
+8. 通过公共 api 获取中国节假日信息
 
 [⬆ Back to Top](#table-of-contents)
 
@@ -90,7 +88,7 @@ yarn add @femessage/v-gantt element-ui
 
 ## Development
 
-develop on top of vue-styleguide
+在 vue-styleguide 环境进行功能开发及维护。
 
 ```sh
 yarn dev
@@ -98,22 +96,22 @@ yarn dev
 
 ### Todo
 
-- support tree node dragging
-- support header-slot to place button like 'new'
-- support delete action
-- fix 'rowH' doesn't inpact tree nodes
+- 支持拖拽树节点
+- 支持 header-slot，可以在树节点上方放置自定义按钮，如【新增】
+- 支持删除节点
+- 修复更改 rowH 时未改变树节点高度的问题
 
 [⬆ Back to Top](#table-of-contents)
 
 ## Links
 
-- [design docs](https://deepexi.yuque.com/docs/share/93cf287f-c001-4b18-abcb-ae6fb4d08e33)
+- [设计文档](https://deepexi.yuque.com/docs/share/93cf287f-c001-4b18-abcb-ae6fb4d08e33)
 
 [⬆ Back to Top](#table-of-contents)
 
 ## Inspiration
 
-thanks to
+功能实现和 ui 参考了
 
 - [ones-plan](https://ones.ai/plan.html)
 - [omniplan](https://www.omnigroup.com/omniplan/)
