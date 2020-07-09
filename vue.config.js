@@ -2,6 +2,7 @@ module.exports = {
   css: {
     extract: false,
   },
+  productionSourceMap: false,
   configureWebpack: (config) => {
     if (process.env.NODE_ENV === 'production') {
       config.output.libraryExport = 'default'
