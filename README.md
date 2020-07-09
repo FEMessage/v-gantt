@@ -14,11 +14,12 @@
 - [Introduction](#introduction)
 - [Feature](#feature)
 - [Quick Start](#quick-start)
-  - [组件开发](#组件开发)
-    - [Todo](#todo)
+- [开发组件](#开发组件)
+  - [Todo](#todo)
 - [Links](#links)
 - [Inspiration](#inspiration)
 - [Contributing](#contributing)
+- [Contributors](#contributors)
 - [License](#license)
 
 ## Introduction
@@ -35,7 +36,7 @@
 4. 点击【今天】按钮，快速跳转到今天列
 5. 点击【天】按钮，可切换至【周】视图（可配置默认视图）
 6. 点击树节点，跳转到该甘特图节点
-7. 点击里程碑线 🧵，跳转到里程碑行
+7. 点击里程碑线，跳转到里程碑行
 8. 通过公共 api 获取中国节假日信息
 
 [⬆ Back to Top](#table-of-contents)
@@ -87,7 +88,7 @@ yarn add @femessage/v-gantt
 </script>
 ```
 
-### 组件开发
+## 开发组件
 
 在 vue-styleguide 环境进行功能开发及维护。
 
@@ -95,7 +96,7 @@ yarn add @femessage/v-gantt
 yarn dev
 ```
 
-#### Todo
+### Todo
 
 - 支持拖拽树节点
 - 支持 header-slot，可以在树节点上方放置自定义按钮，如【新增】
@@ -129,6 +130,18 @@ For those who are interested in contributing to this project, such as:
 - implement a new feature
 
 Please refer to our [contributing guide](https://github.com/FEMessage/.github/blob/master/CONTRIBUTING.md).
+
+[⬆ Back to Top](#table-of-contents)
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
 
 [⬆ Back to Top](#table-of-contents)
 
