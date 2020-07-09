@@ -25,7 +25,9 @@
     "lint": "vue-cli-service lint",
     "styleguide": "vue-cli-service styleguidist",
     "styleguide:build": "vue-cli-service styleguidist:build",
-    "inspect": "vue-cli-service inspect > webpack.config.js"
+    "inspect": "vue-cli-service inspect > webpack.config.js",
+    "stdver": "standard-version -m '[skip ci] chore(release): v%s'",
+    "release": "gren release --override"
   },
   "main": "dist/v-gantt.umd.min.js",
   "files": [
@@ -40,6 +42,7 @@
     "vue": "^2.6.11"
   },
   "devDependencies": {
+    "@femessage/grenrc": "^1.0.1",
     "@rollup/plugin-commonjs": "^13.0.0",
     "@types/jest": "^24.0.19",
     "@types/lodash.clonedeep": "^4.5.6",
@@ -68,6 +71,7 @@
     "rollup-plugin-terser": "^6.1.0",
     "rollup-plugin-typescript2": "^0.27.1",
     "rollup-plugin-vue": "^5",
+    "standard-version": "^8.0.0",
     "stylelint": "^13.6.1",
     "stylelint-config-standard": "^20.0.0",
     "typescript": "~3.9.3",
@@ -97,5 +101,6 @@
       "stylelint --fix",
       "git add"
     ]
-  }
+  },
+  "gren": "@femessage/grenrc"
 }
