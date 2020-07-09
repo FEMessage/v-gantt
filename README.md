@@ -45,6 +45,8 @@ Base on vue + element-ui, create web version omniplan。[docs](https://femssage.
 
 ## Quick Start
 
+`v-gantt` is based on `el-button`, `el-select`, `el-progress` and `el-tree`. So you need to register those in global environment with `Vue.component` or simply with `Vue.use(Element)`
+
 ```sh
 yarn add @femessage/v-gantt element-ui
 ```
