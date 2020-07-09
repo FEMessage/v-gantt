@@ -635,6 +635,10 @@ export default Vue.extend({
       &::-webkit-scrollbar {
         display: none;
       }
+
+      & > .gantt-layout {
+        height: 100%; // 用处基本上只为了在 vue 开发者工具中正确高亮其范围
+      }
     }
   }
 
