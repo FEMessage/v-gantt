@@ -102,6 +102,8 @@ yarn dev
 - 支持 header-slot，可以在树节点上方放置自定义按钮，如【新增】
 - 支持删除节点
 - 修复更改 rowH 时未改变树节点高度的问题
+- 支持进度修改功能
+- 支持修改里程碑完成状态
 
 [⬆ Back to Top](#table-of-contents)
 

@@ -104,6 +104,8 @@ yarn dev
 - support header-slot to place button like 'new'
 - support delete action
 - fix 'rowH' doesn't inpact tree nodes
+- support drag to change progress
+- support click to toggle milestone
 
 [⬆ Back to Top](#table-of-contents)
 
