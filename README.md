@@ -142,7 +142,16 @@ Please refer to our [contributing guide](https://github.com/FEMessage/.github/bl
 Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/donaldshen"><img src="https://avatars3.githubusercontent.com/u/19591950?v=4" width="100px;" alt=""/><br /><sub><b>Donald Shen</b></sub></a><br /><a href="https://github.com/FEMessage/v-gantt/commits?author=donaldshen" title="Code">💻</a> <a href="#blog-donaldshen" title="Blogposts">📝</a> <a href="#tool-donaldshen" title="Tools">🔧</a> <a href="#design-donaldshen" title="Design">🎨</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-enable -->
+<!-- prettier-ignore-end -->
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!

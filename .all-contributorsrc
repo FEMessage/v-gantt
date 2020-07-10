@@ -9,6 +9,20 @@
   "imageSize": 100,
   "commit": false,
   "commitConvention": "angular",
-  "contributors": [],
-  "contributorsPerLine": 7
+  "contributors": [
+    {
+      "login": "donaldshen",
+      "name": "Donald Shen",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/19591950?v=4",
+      "profile": "https://github.com/donaldshen",
+      "contributions": [
+        "code",
+        "blog",
+        "tool",
+        "design"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "skipCi": true
 }
