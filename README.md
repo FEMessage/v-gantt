@@ -106,6 +106,7 @@ yarn dev
 - fix 'rowH' doesn't inpact tree nodes
 - support drag to change progress
 - support click to toggle milestone
+- lost <gantt-layout> in <gantt-group> when compile with rollup
 
 [⬆ Back to Top](#table-of-contents)
 
@@ -152,6 +153,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
+
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
