@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.1.1](https://github.com/FEMessage/v-gantt/compare/v1.1.0...v1.1.1) (2020-07-10)
+
+
+### Bug Fixes
+
+* access public ([#6](https://github.com/FEMessage/v-gantt/issues/6)) ([4c4ee29](https://github.com/FEMessage/v-gantt/commit/4c4ee298424874bab420d8f86b7904fe8bb86e10))
+
 ## 1.1.0 (2020-07-10)
 
 
