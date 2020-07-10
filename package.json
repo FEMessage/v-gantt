@@ -21,7 +21,6 @@
     "dist"
   ],
   "main": "dist/v-gantt.umd.min.js",
-  "module": "dist/v-gantt.esm.min.js",
   "unpkg": "dist/v-gantt.umd.min.js",
   "browser": {
     "./sfc": "src/index.vue"
