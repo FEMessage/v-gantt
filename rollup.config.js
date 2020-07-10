@@ -3,6 +3,7 @@
  * 建议优先使用 webpack 打包的代码（体积更小，vue-cli 有细致的优化）
  * rollup 可以作为产出 esm 模块的补充
  */
+// FIXME: 目前用 rollup 打包会导致 gantt-group 组件丢失对 gantt-layout 组件的引用！
 
 // 相比 @rollup/plugin-typescript，解决了引入虚拟模块的问题
 // https://github.com/ezolenko/rollup-plugin-typescript2/issues/78#issuecomment-399524537
