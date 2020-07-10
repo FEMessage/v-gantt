@@ -20,7 +20,7 @@ module.exports = {
     {
       name: 'Demo',
       sections: glob
-        .sync('docs/*.md')
+        .sync('docs-md/*.md')
         .map((p) => ({ name: path.basename(p, '.md'), content: p })),
     },
   ],
