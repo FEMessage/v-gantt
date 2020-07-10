@@ -46,7 +46,7 @@
 `v-gantt` 依赖了 `el-button`、`el-select`、`el-progress` 和 `el-tree` 组件。请在全局环境使用 `Vue.component` or `Vue.use(Element)` 注册 element 组件
 
 ```sh
-yarn add @femessage/v-gantt element-ui
+yarn add @femessage/v-gantt @femessage/element-ui
 ```
 
 ```html
