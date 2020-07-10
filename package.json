@@ -1,7 +1,7 @@
 {
   "name": "@femessage/v-gantt",
-  "version": "0.1.13",
-  "description": "vue gantt component",
+  "version": "1.0.0",
+  "description": "vue gantt component, just like omniplan!",
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -14,27 +14,31 @@
     "vue",
     "element",
     "gantt",
-    "component"
+    "omniplan"
   ],
-  "homepage": "https://github.com/FEMessage/v-gantt",
-  "scripts": {
-    "dev": "yarn styleguide",
-    "build": "vue-cli-service build --target lib src/main.ts",
-    "rollup": "rollup -c",
-    "test": "yarn test:unit",
-    "test:unit": "vue-cli-service test:unit --passWithNoTests",
-    "lint": "vue-cli-service lint",
-    "styleguide": "vue-cli-service styleguidist",
-    "styleguide:build": "vue-cli-service styleguidist:build",
-    "inspect": "vue-cli-service inspect > webpack.config.js",
-    "stdver": "standard-version -m '[skip ci] chore(release): v%s'",
-    "release": "gren release --override"
-  },
-  "main": "dist/v-gantt.umd.min.js",
   "files": [
     "src",
     "dist"
   ],
+  "main": "dist/v-gantt.umd.min.js",
+  "module": "dist/v-gantt.esm.min.js",
+  "unpkg": "dist/v-gantt.umd.min.js",
+  "browser": {
+    "./sfc": "src/index.vue"
+  },
+  "scripts": {
+    "dev": "vue-cli-service styleguidist",
+    "build": "yarn build:umd & yarn build:esm & yarn doc",
+    "build:umd": "vue-cli-service build --target lib src/main.ts",
+    "build:esm": "rollup -c",
+    "test": "yarn test:unit",
+    "test:unit": "vue-cli-service test:unit --passWithNoTests",
+    "lint": "vue-cli-service lint",
+    "doc": "vue-cli-service styleguidist:build",
+    "inspect": "vue-cli-service inspect > webpack.config.js",
+    "stdver": "standard-version -m '[skip ci] chore(release): v%s'",
+    "release": "gren release --override"
+  },
   "dependencies": {
     "axios": "^0.19.2",
     "dayjs": "^1.8.29",

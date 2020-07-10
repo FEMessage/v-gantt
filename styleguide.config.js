@@ -4,6 +4,7 @@ const glob = require('glob')
 
 module.exports = {
   title: 'v-gantt 文档',
+  styleguideDir: 'docs', // 每次构建会清除掉内容，所以文档不能放在里面
   version: require('./package.json').version,
   pagePerSection: true,
   ribbon: {
