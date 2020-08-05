@@ -63,7 +63,7 @@ export default Vue.extend({
       const { rowH, colW } = this.bus
       const { x, y, w, h } = this.data
       const { dragData, resizeData } = this
-      // 里程碑中心需要对齐每天最右边，而非中间
+      // 里程碑中心需要对齐当天最右边，而非中间
       const milestoneOffset = isMilestone(this.data) ? colW / 2 : 0
 
       return {
