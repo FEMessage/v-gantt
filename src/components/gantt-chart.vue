@@ -591,7 +591,7 @@ export default Vue.extend({
             .milestone-line {
               position: absolute;
               top: calc(100% + 1px);
-              left: calc(50% - 1px);
+              left: calc(100% - 1px);
               width: 2px;
               height: 10000px;
               background-color: fade(@progress-background, 50%);
@@ -617,9 +617,11 @@ export default Vue.extend({
           }
 
           .date-in-month {
+            @offset: 4px;
+
             position: absolute;
-            top: 0;
-            right: 1px;
+            top: @offset / 2;
+            right: @offset;
             transform: scale(0.55);
             transform-origin: 100% 0;
             line-height: 1;
