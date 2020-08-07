@@ -36,6 +36,14 @@ export default Vue.extend({
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: grab;
+
+  &.moving,
+  &.focusing {
+    &::before {
+      display: none;
+    }
+  }
 
   .content {
     width: 16px;
