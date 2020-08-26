@@ -1,6 +1,8 @@
 <template>
   <div class="gantt-tree">
-    <header></header>
+    <header>
+      <slot name="header"></slot>
+    </header>
     <div ref="treeContainer" class="tree-container" @scroll="onScroll">
       <!-- TODO: draggable -->
       <el-tree
@@ -207,7 +209,6 @@ export default Vue.extend({
   header {
     height: @header-height;
     display: flex;
-    justify-content: flex-end;
     padding: 0 5px;
   }
 

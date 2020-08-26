@@ -6,7 +6,10 @@
       :scroll-top.sync="scrollTop"
       @delete="onDelete"
       @move="onMove"
-    />
+    >
+      <!--@slot 左侧树 header -->
+      <slot slot="header" name="tree-header"></slot>
+    </gantt-tree>
     <gantt-chart
       :data="ganttData"
       :bus="bus"
