@@ -10,12 +10,12 @@
         v-loading="dragging"
         :data="treeData"
         :expand-on-click-node="false"
-        :draggable="false"
         node-key="id"
         @node-expand="onNodeExpand"
         @node-collapse="onNodeCollapse"
         @node-drop="onDrop"
         @node-click="onNodeClick"
+        v-bind="treeAttrs"
       >
         <template v-slot="{ data: d }">
           <div class="tree-node el-tree-node__label">
@@ -100,6 +100,10 @@ export default Vue.extend({
     scrollTop: {
       type: Number,
       required: true,
+    },
+    treeAttrs: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data: () => ({

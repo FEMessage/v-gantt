@@ -6,6 +6,7 @@
       :scroll-top.sync="scrollTop"
       @delete="onDelete"
       @move="onMove"
+      :treeAttrs="treeAttrs"
     >
       <!--@slot 左侧树 header -->
       <slot slot="header" name="tree-header"></slot>
@@ -144,6 +145,14 @@ export default Vue.extend({
     view: {
       type: String,
       default: 'day',
+    },
+    /**
+     * el-tree 属性设置
+     * [el-tree文档](http://element-cn.eleme.io/#/zh-CN/component/tree)
+     */
+    treeAttrs: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data: () => ({
