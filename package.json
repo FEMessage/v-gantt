@@ -45,7 +45,7 @@
     "store2": "^2.11.2"
   },
   "devDependencies": {
-    "@femessage/github-release-notes": "^0.19.0",
+    "@femessage/github-release-notes": "latest",
     "@rollup/plugin-commonjs": "^13.0.0",
     "@types/jest": "^24.0.19",
     "@types/lodash.clonedeep": "^4.5.6",
@@ -109,5 +109,6 @@
       "git add"
     ]
   },
-  "gren": "@femessage/grenrc"
+  "gren": "@femessage/grenrc",
+  "vue-sfc-cli": "1.12.0"
 }

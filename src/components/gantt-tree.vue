@@ -1,6 +1,8 @@
 <template>
   <div class="gantt-tree">
-    <header></header>
+    <header>
+      <slot name="header"></slot>
+    </header>
     <div ref="treeContainer" class="tree-container" @scroll="onScroll">
       <!-- TODO: draggable -->
       <el-tree
@@ -8,12 +10,12 @@
         v-loading="dragging"
         :data="treeData"
         :expand-on-click-node="false"
-        :draggable="false"
         node-key="id"
         @node-expand="onNodeExpand"
         @node-collapse="onNodeCollapse"
         @node-drop="onDrop"
         @node-click="onNodeClick"
+        v-bind="treeAttrs"
       >
         <template v-slot="{ data: d }">
           <div class="tree-node el-tree-node__label">
@@ -98,6 +100,10 @@ export default Vue.extend({
     scrollTop: {
       type: Number,
       required: true,
+    },
+    treeAttrs: {
+      type: Object,
+      default: () => ({}),
     },
   },
   data: () => ({
@@ -207,7 +213,6 @@ export default Vue.extend({
   header {
     height: @header-height;
     display: flex;
-    justify-content: flex-end;
     padding: 0 5px;
   }
 
