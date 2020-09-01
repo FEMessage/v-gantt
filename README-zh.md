@@ -24,7 +24,7 @@
 
 ## Introduction
 
-甘特图组件。基于 vue + element-ui，打造 web 版 omniplan。[在线文档](https://femssage.github.io/v-gantt)
+甘特图组件。基于 vue + element-ui，打造 web 版 omniplan。
 
 [⬆ Back to Top](#table-of-contents)
 
@@ -110,6 +110,7 @@ yarn dev
 
 ## Links
 
+- [在线demo](https://femessage.github.io/v-gantt/)
 - [设计文档](https://deepexi.yuque.com/docs/share/93cf287f-c001-4b18-abcb-ae6fb4d08e33)
 
 [⬆ Back to Top](#table-of-contents)

@@ -26,7 +26,7 @@
 
 ## Introduction
 
-Base on vue + element-ui, create web version omniplan。[docs](https://femssage.github.io/v-gantt)
+Base on vue + element-ui, create web version omniplan。
 
 [⬆ Back to Top](#table-of-contents)
 
@@ -112,6 +112,7 @@ yarn dev
 
 ## Links
 
+- [online demo](https://femessage.github.io/v-gantt/)
 - [design docs](https://deepexi.yuque.com/docs/share/93cf287f-c001-4b18-abcb-ae6fb4d08e33)
 
 [⬆ Back to Top](#table-of-contents)
