@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.0](https://github.com/FEMessage/v-gantt/compare/v1.1.4...v1.2.0) (2020-09-01)
+
+
+### Features
+
+* 左侧 tree 支持 header slot 和 attrs ([#17](https://github.com/FEMessage/v-gantt/issues/17)) ([82f588e](https://github.com/FEMessage/v-gantt/commit/82f588e2b07b99532239a99e8832f74af9205b2f))
+
 ### [1.1.4](https://github.com/FEMessage/v-gantt/compare/v1.1.3...v1.1.4) (2020-08-07)
 
 ### [1.1.3](https://github.com/FEMessage/v-gantt/compare/v1.1.2...v1.1.3) (2020-07-10)
