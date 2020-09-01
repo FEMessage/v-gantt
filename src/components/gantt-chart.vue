@@ -3,10 +3,26 @@
     <div ref="xScrollContainer" class="x-scroll-container">
       <section class="content" :style="contentStyle">
         <header>
-          <section v-if="weekMode" class="weeks">
+          <section v-if="monthMode" class="months">
+            <div
+              v-for="m in months"
+              :key="m"
+              :class="[
+                'month',
+                {
+                  // month 视图实现跳转到今天，实际上只需要跳到当前月即可
+                  'date today': isCurrentMonth(m),
+                },
+              ]"
+              :style="monthStyle(m)"
+            >
+              {{ m }}
+            </div>
+          </section>
+          <section v-else-if="weekMode" class="weeks">
             <div v-for="w in weeks" :key="w" class="week">{{ w }}</div>
           </section>
-          <section class="dates">
+          <section class="dates" v-if="dayMode || weekMode">
             <div
               v-for="d in dates"
               :key="d"
@@ -70,6 +86,7 @@
 </template>
 <script lang="ts">
 import Vue, { PropType } from 'vue'
+import _uniq from 'lodash.uniq'
 import GanttLayout from './gantt-layout.vue'
 import {
   GanttData,
@@ -92,6 +109,10 @@ const colUnitOptions = [
   {
     label: '周',
     value: ColUnit.Week,
+  },
+  {
+    label: '月',
+    value: ColUnit.Month,
   },
 ]
 
@@ -164,12 +185,16 @@ interface ContentStyle {
   backgroundSize: string
 }
 
+interface MonthStyle {
+  width: string
+}
+
 /**
  * 根据以下条件，返回列的时间范围
  * - 所有节点的最早开始时间 & 最晚结束时间
  * - 列模式
  */
-function getRange(data: GanttData) {
+function getRange(data: GanttData, colUnit: ColUnit = ColUnit.Day) {
   let startDate: string | undefined
   let endDate: string | undefined
   function loop(d: GanttData | GanttNode) {
@@ -193,21 +218,41 @@ function getRange(data: GanttData) {
     }
   }
   loop(data)
-  /**
-   * 起始总是从周一开始
-   * 方便 week 视图数据处理
-   */
-  startDate = dayjs(startDate)
-    .$day(1)
-    .$format()
-  /**
-   * 末尾持续到几天后的那一周日。同样是方便周视图处理
-   * HACK: 这里和 gantt-milestone 组件还略有关系；因为该组件允许里程碑标题超出组件宽度限制，所以如果末尾留的位置不够，会导致 x-scroll-container 横向滚动出 bug
-   */
-  endDate = dayjs(endDate)
-    .add(3, 'day')
-    .$day(7)
-    .$format()
+
+  switch (colUnit) {
+    case ColUnit.Month:
+      /**
+       * 起始总是从月初开始
+       * 方便 month 视图数据处理
+       */
+      startDate = dayjs(startDate)
+        .startOf('month')
+        .$format()
+      /**
+       * 末尾持续到几天后的月尾。同样是方便 month 视图处理
+       * HACK: 这里和 gantt-milestone 组件还略有关系；因为该组件允许里程碑标题超出组件宽度限制，所以如果末尾留的位置不够，会导致 x-scroll-container 横向滚动出 bug
+       */
+      endDate = dayjs(endDate)
+        .add(3, 'day')
+        .endOf('month')
+        .$format()
+      break
+
+    default:
+      /**
+       * 理由同上
+       */
+      startDate = dayjs(startDate)
+        .$day(1)
+        .$format()
+
+      endDate = dayjs(endDate)
+        .add(3, 'day')
+        .$day(7)
+        .$format()
+      break
+  }
+
   return [startDate!, endDate!]
 }
 
@@ -295,20 +340,23 @@ export default Vue.extend({
     weekMode(): boolean {
       return this.colUnit === ColUnit.Week
     },
+    monthMode(): boolean {
+      return this.colUnit === ColUnit.Month
+    },
     weeks(): string[] {
-      switch (this.colUnit) {
-        case ColUnit.Week: {
-          const { dates } = this
-          const result = []
-          for (let i = 0; i < dates.length; i += 7) {
-            result.push(`${dates[i]} ~ ${dates[i + 6]}`)
-          }
-          return result
-        }
-        case ColUnit.Day:
-        default:
-          return []
+      const { dates } = this
+      const result = []
+      for (let i = 0; i < dates.length; i += 7) {
+        result.push(`${dates[i]} ~ ${dates[i + 6]}`)
       }
+      return result
+    },
+    months(): string[] {
+      const { dates } = this
+      const months = dates.map((d) => dayjs(d).format('YYYY-MM'))
+      const result = _uniq(months)
+
+      return result
     },
     contentStyle(): ContentStyle {
       const { colW } = this.bus
@@ -318,14 +366,32 @@ export default Vue.extend({
       }
       if (this.colUnit === ColUnit.Week) {
         result.backgroundSize = colW * 7 + 'px'
+      } else if (this.colUnit === ColUnit.Month) {
+        // 因为每月的天数是不固定的，所以不使用 background-size 的方式
+        result.backgroundSize = '0px'
       }
       return result
+    },
+    monthStyle(): (m: string) => MonthStyle {
+      // 月的宽度根据当月的天数决定
+      const { colW } = this.bus
+
+      return (m: string) => {
+        const numberOfDays = this.dates.filter((d) => d.startsWith(m)).length
+
+        return {
+          width: colW * numberOfDays + 'px',
+        }
+      }
     },
     layoutData(): GanttLayoutData {
       return transform(this.data, this.dates, this.bus.collapsedMap)
     },
     isToday(): (date: string) => boolean {
       return (date: string) => this.today === date
+    },
+    isCurrentMonth(): (month: string) => boolean {
+      return (month: string) => dayjs(this.today).format('YYYY-MM') === month
     },
     dragPosition(): Set<string> {
       const set = new Set<string>()
@@ -398,6 +464,7 @@ export default Vue.extend({
       immediate: true,
     },
     colUnit() {
+      this.dates = []
       this.complementDates()
     },
   },
@@ -440,7 +507,7 @@ export default Vue.extend({
       const { data } = this
       if (!data.length) return
       // FIXME: 应当限制日期最长范围，防止程序崩溃。需要进行性能测试
-      const [startDate, endDate] = getRange(data)
+      const [startDate, endDate] = getRange(data, this.colUnit)
       complementRange(this.dates, startDate, endDate)
     },
     isRestDay(date: string) {
@@ -522,6 +589,36 @@ export default Vue.extend({
       border-bottom: 1px solid @borderColor;
       user-select: none; // HACK: resize 时会莫名选中标题
 
+      .months {
+        flex: 1 0 50%;
+        width: 100%;
+        display: flex;
+        font-size: 14px;
+        border-bottom: 1px solid @borderColor;
+
+        .month {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+
+          // month 视图使用伪类实现分割线
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100vh;
+            background: linear-gradient(
+              to left,
+              rgba(0, 0, 0, 0.1) 1px,
+              transparent 1px
+            );
+          }
+        }
+      }
+
       .weeks {
         flex: 1 0 50%;
         width: 100%;
@@ -556,11 +653,12 @@ export default Vue.extend({
             position: absolute;
             bottom: 0;
             left: 0;
-            transform: scale(0.7);
+            transform: scale(0.8);
             width: 100%;
-            transform-origin: 50% 100%;
+            transform-origin: 50%;
             opacity: 0.8;
             text-align: center;
+            font-size: 12px;
           }
 
           // mixin

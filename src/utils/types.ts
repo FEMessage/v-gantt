@@ -106,6 +106,7 @@ export interface Bus {
 }
 
 export enum ColUnit {
-  Day,
-  Week,
+  Day = 'day',
+  Week = 'week',
+  Month = 'month',
 }
