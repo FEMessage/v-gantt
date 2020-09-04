@@ -31,13 +31,14 @@
 ## Feature
 
 1. 折叠、展开树节点
-2. 整体拖拽甘特图节点
-3. 拖拽甘特图节点右侧，可以更改持续时间
-4. 点击【今天】按钮，快速跳转到今天列
-5. 点击【天】按钮，可切换至【周】视图（可配置默认视图）
-6. 点击树节点，跳转到该甘特图节点
-7. 点击里程碑线，跳转到里程碑行
-8. 通过公共 api 获取中国节假日信息
+2. 支持树 header slot
+3. 整体拖拽甘特图节点
+4. 拖拽甘特图节点右侧，可以更改持续时间
+5. 点击【今天】按钮，快速跳转到今天列
+6. 点击【天】按钮，可切换至【周】、【月】视图（可配置默认视图）
+7. 点击树节点，跳转到该甘特图节点
+8. 点击里程碑线 🧵，跳转到里程碑行
+9. 通过公共 api 获取中国节假日信息
 
 [⬆ Back to Top](#table-of-contents)
 
@@ -110,7 +111,7 @@ yarn dev
 
 ## Links
 
-- [在线demo](https://femessage.github.io/v-gantt/)
+- [在线 demo](https://femessage.github.io/v-gantt/)
 - [设计文档](https://deepexi.yuque.com/docs/share/93cf287f-c001-4b18-abcb-ae6fb4d08e33)
 
 [⬆ Back to Top](#table-of-contents)
