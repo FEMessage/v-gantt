@@ -54,6 +54,18 @@
               ></div>
             </div>
           </section>
+          <div
+            :class="[
+              'hovering-node-date',
+              { 'is-milestone': hoveringNode.date.length === 1 },
+            ]"
+            v-if="hoveringNode.visible"
+            :style="hoveringNodeStyle"
+          >
+            <span v-for="d in hoveringNode.date" :key="d">{{
+              d | formatDate
+            }}</span>
+          </div>
         </header>
         <div
           ref="yScrollContainer"
@@ -96,8 +108,9 @@ import {
   Bus,
   ColUnit,
   GanttMilestone,
+  HoveringNode,
 } from '@/utils/types'
-import { isGroup, isMilestone } from '@/utils'
+import { isGroup, isMilestone, search } from '@/utils'
 import dayjs from '@/utils/day'
 import { DayData, getWeekdays, isRestDay } from '@/utils/weekday'
 
@@ -288,9 +301,18 @@ function complementRange(range: string[], startDate: string, endDate: string) {
   }
 }
 
+const today = dayjs().$format()
+
 export default Vue.extend({
   name: 'GanttChart',
   components: { GanttLayout },
+  filters: {
+    formatDate(date: string) {
+      return dayjs(today).year() === dayjs(date).year()
+        ? dayjs(date).format('MM-DD')
+        : date
+    },
+  },
   props: {
     bus: {
       type: Object as PropType<Bus>,
@@ -318,7 +340,13 @@ export default Vue.extend({
     years: new Set<string | number>(),
     dates: [] as string[],
     colUnitOptions,
-    today: dayjs().$format(),
+    today,
+    hoveringNode: {
+      visible: false,
+      left: 0,
+      width: 0,
+      date: [],
+    } as HoveringNode,
   }),
   computed: {
     hasToday(): boolean {
@@ -382,6 +410,12 @@ export default Vue.extend({
         return {
           width: colW * numberOfDays + 'px',
         }
+      }
+    },
+    hoveringNodeStyle() {
+      return {
+        left: this.hoveringNode.left + 'px',
+        width: this.hoveringNode.width + 'px',
       }
     },
     layoutData(): GanttLayoutData {
@@ -464,6 +498,7 @@ export default Vue.extend({
       immediate: true,
     },
     colUnit() {
+      // 不同的视图需要展示的日期范围可能是不同的，所以切换视图时重置
       this.dates = []
       this.complementDates()
     },
@@ -500,6 +535,35 @@ export default Vue.extend({
         xScrollContainer.scrollLeft = targetX
       }
       scroll()
+    })
+    ee.on(ee.Event.StartHover, ({ id, x, w }: any) => {
+      const [node] = search(id, this.data) as [GanttNode]
+
+      let minWidth = 120 // 给定一个最小宽度，否则日期比较长时无法正常展示
+      let date = []
+
+      if (isMilestone(node)) {
+        minWidth = 80
+        date = [node.date]
+      } else {
+        date = [node.startDate, node.endDate]
+      }
+
+      const width = w < minWidth ? minWidth : w
+
+      // 使居中
+      const left = x - (width - w) / 2
+
+      this.hoveringNode = {
+        visible: true,
+        left,
+        width,
+        date,
+      }
+    })
+
+    ee.on(ee.Event.EndHover, () => {
+      this.hoveringNode.visible = false
     })
   },
   methods: {
@@ -582,6 +646,7 @@ export default Vue.extend({
     padding-bottom: 20px;
 
     header {
+      position: relative;
       height: @header-height;
       display: flex;
       flex-direction: column;
@@ -724,6 +789,25 @@ export default Vue.extend({
             transform-origin: 100% 0;
             line-height: 1;
           }
+        }
+      }
+
+      .hovering-node-date {
+        box-sizing: border-box;
+        position: absolute;
+        min-width: 120px;
+        background: @progress-content;
+        border-radius: 3px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        padding: 2px 5px;
+        bottom: 0;
+        font-size: 13px;
+
+        &.is-milestone {
+          min-width: 80px;
+          justify-content: center;
         }
       }
     }

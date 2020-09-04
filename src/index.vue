@@ -179,7 +179,7 @@ export default Vue.extend({
           case ColUnit.Week:
             return _colW * 0.5
           case ColUnit.Month:
-            return _colW * 0.15
+            return _colW * 0.2
           case ColUnit.Day:
           default:
             return _colW

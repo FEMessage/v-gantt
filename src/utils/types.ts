@@ -110,3 +110,10 @@ export enum ColUnit {
   Week = 'week',
   Month = 'month',
 }
+
+export interface HoveringNode {
+  visible: boolean
+  left: number
+  width: number
+  date: string[]
+}
