@@ -111,9 +111,16 @@ export enum ColUnit {
   Month = 'month',
 }
 
+type HoveringNodeDate = {
+  start: string
+  end: string
+}
+
 export interface HoveringNode {
+  isMilestone: boolean
   visible: boolean
   left: number
   width: number
-  date: string[]
+  originDate: HoveringNodeDate
+  date: HoveringNodeDate
 }

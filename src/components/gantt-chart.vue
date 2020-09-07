@@ -57,13 +57,14 @@
           <div
             :class="[
               'hovering-node-date',
-              { 'is-milestone': hoveringNode.date.length === 1 },
+              { 'is-milestone': !hoveringNode.date.end },
             ]"
             v-if="hoveringNode.visible"
             :style="hoveringNodeStyle"
           >
-            <span v-for="d in hoveringNode.date" :key="d">{{
-              d | formatDate
+            <span>{{ hoveringNode.date.start | formatDate }}</span>
+            <span v-if="hoveringNode.date.end">{{
+              hoveringNode.date.end | formatDate
             }}</span>
           </div>
         </header>
@@ -128,6 +129,11 @@ const colUnitOptions = [
     value: ColUnit.Month,
   },
 ]
+
+const dateMinWidth = {
+  milestone: 100,
+  other: 160,
+}
 
 function transform(
   ganttData: GanttData,
@@ -342,10 +348,12 @@ export default Vue.extend({
     colUnitOptions,
     today,
     hoveringNode: {
+      isMilestone: false,
       visible: false,
       left: 0,
       width: 0,
-      date: [],
+      originDate: { start: '', end: '' },
+      date: { start: '', end: '' },
     } as HoveringNode,
   }),
   computed: {
@@ -536,17 +544,24 @@ export default Vue.extend({
       }
       scroll()
     })
+
     ee.on(ee.Event.StartHover, ({ id, x, w }: any) => {
       const [node] = search(id, this.data) as [GanttNode]
 
-      let minWidth = 120 // 给定一个最小宽度，否则日期比较长时无法正常展示
-      let date = []
+      let minWidth = dateMinWidth.other // 给定一个最小宽度，否则日期比较长时无法正常展示
+      let date = {} as HoveringNode['originDate']
+
+      let aIsMilestone = false
 
       if (isMilestone(node)) {
-        minWidth = 80
-        date = [node.date]
+        minWidth = dateMinWidth.milestone
+        date.start = node.date
+        aIsMilestone = true
       } else {
-        date = [node.startDate, node.endDate]
+        date = {
+          start: node.startDate,
+          end: node.endDate,
+        }
       }
 
       const width = w < minWidth ? minWidth : w
@@ -555,14 +570,90 @@ export default Vue.extend({
       const left = x - (width - w) / 2
 
       this.hoveringNode = {
+        isMilestone: aIsMilestone,
         visible: true,
         left,
         width,
+        originDate: { ...date },
         date,
       }
     })
 
     ee.on(ee.Event.EndHover, () => {
+      this.hoveringNode.visible = false
+    })
+
+    ee.on(
+      ee.Event.Drag,
+      ({
+        movedCols,
+        dataInPx,
+      }: {
+        movedCols: number
+        dataInPx: { [key: string]: number }
+      }) => {
+        if (!this.monthMode) return
+
+        const minWidth =
+          dateMinWidth[this.hoveringNode.isMilestone ? 'milestone' : 'other']
+
+        const date = this.hoveringNode.date
+
+        date.start = dayjs.$add(this.hoveringNode.originDate.start, movedCols)
+
+        if (!this.hoveringNode.isMilestone) {
+          date.end = dayjs.$add(this.hoveringNode.originDate.end, movedCols)
+        }
+
+        const width = dataInPx.w < minWidth ? minWidth : dataInPx.w
+        const left = dataInPx.x - (width - dataInPx.w) / 2
+
+        this.hoveringNode = {
+          ...this.hoveringNode,
+          visible: true, // drag 时即便不再 hover 也依然显示当前节点日期
+          width,
+          left,
+          date,
+        }
+      },
+    )
+
+    ee.on(
+      ee.Event.Resize,
+      ({
+        resizedCols,
+        dataInPx,
+      }: {
+        resizedCols: number
+        dataInPx: { [key: string]: number }
+      }) => {
+        if (!this.monthMode) return
+
+        const date = this.hoveringNode.date
+
+        if (this.hoveringNode.isMilestone) {
+          date.start = dayjs.$add(
+            this.hoveringNode.originDate.start,
+            resizedCols,
+          )
+        } else {
+          date.end = dayjs.$add(this.hoveringNode.originDate.end, resizedCols)
+        }
+
+        this.hoveringNode = {
+          ...this.hoveringNode,
+          visible: true, // resize 时即便不再 hover 也依然显示当前节点日期
+          width: dataInPx.w,
+          date,
+        }
+      },
+    )
+
+    ee.on(ee.Event.DragEnd, () => {
+      this.hoveringNode.visible = false
+    })
+
+    ee.on(ee.Event.ResizeEnd, () => {
       this.hoveringNode.visible = false
     })
   },
@@ -795,7 +886,6 @@ export default Vue.extend({
       .hovering-node-date {
         box-sizing: border-box;
         position: absolute;
-        min-width: 120px;
         background: @progress-content;
         border-radius: 3px;
         color: white;
@@ -806,7 +896,6 @@ export default Vue.extend({
         font-size: 13px;
 
         &.is-milestone {
-          min-width: 80px;
           justify-content: center;
         }
       }

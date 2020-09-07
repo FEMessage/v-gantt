@@ -60,6 +60,7 @@ export default Vue.extend({
     },
     focusing: false,
     hovering: false,
+    otherWorking: false,
   }),
   computed: {
     component(): Vue.VueConstructor {
@@ -126,6 +127,20 @@ export default Vue.extend({
         this.focus()
       }
     })
+
+    ee.on(ee.Event.DragStart, ({ id }: { id: string }) => {
+      this.otherWorking = id !== this.data.id
+    })
+    ee.on(ee.Event.DragEnd, () => {
+      this.otherWorking = false
+    })
+
+    ee.on(ee.Event.ResizeStart, ({ id }: { id: string }) => {
+      this.otherWorking = id !== this.data.id
+    })
+    ee.on(ee.Event.ResizeEnd, () => {
+      this.otherWorking = false
+    })
   },
   methods: {
     onDragStart() {
@@ -142,6 +157,10 @@ export default Vue.extend({
       const { ee } = this.bus
       ee.emit(ee.Event.Drag, {
         movedCols: dividedBy(this.dragData.offsetX, this.bus.colW),
+        dataInPx: {
+          ...this.dataInPx,
+          ...this.absolutePosition,
+        },
       })
     },
     onDragEnd() {
@@ -164,12 +183,14 @@ export default Vue.extend({
     },
     onResize(e: MouseEvent) {
       this.resizeData.offsetX += e.movementX
+
       const { ee } = this.bus
       ee.emit(ee.Event.Resize, {
         resizedCols: Math.max(
           1 - this.data.w, // 至少一列
           dividedBy(this.resizeData.offsetX, this.bus.colW),
         ),
+        dataInPx: this.dataInPx,
       })
     },
     onResizeEnd() {
@@ -191,6 +212,9 @@ export default Vue.extend({
     startHover() {
       // 仅 month 视图开启悬浮显示日期
       if (this.bus.colUnit !== ColUnit.Month) return
+
+      // 其他节点正在 drag 或者 resize 的时候，不能 hover
+      if (this.otherWorking) return
 
       const { ee } = this.bus
       ee.emit(ee.Event.StartHover, {

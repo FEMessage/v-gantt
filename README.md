@@ -38,9 +38,10 @@ Base on vue + element-ui, create web version omniplan。
 4. drag to modify duration
 5. jump to 'today'
 6. col unit base on days or weeks or months
-7. click tree node to jump to gantt node
-8. click milestone's line to jump to milestone node
-9. get chinese festivals by public-api
+7. monthly view hover node to display date info
+8. click tree node to jump to gantt node
+9. click milestone's line to jump to milestone node
+10. get chinese festivals by public-api
 
 [⬆ Back to Top](#table-of-contents)
 
