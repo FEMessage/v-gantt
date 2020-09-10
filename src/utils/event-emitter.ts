@@ -12,6 +12,8 @@ export enum GanttEvent {
   ScrollToNode,
   ScrollTo,
   Focus,
+  StartHover,
+  EndHover,
 }
 
 /**

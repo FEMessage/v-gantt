@@ -33,13 +33,15 @@ Base on vue + element-ui, create web version omniplan。
 ## Feature
 
 1. fold & collapse tree node
-2. drag gantt node to modify dates
-3. drag to modify duration
-4. jump to 'today'
-5. col unit base on days or weeks
-6. click tree node to jump to gantt node
-7. click milestone's line to jump to milestone node
-8. get chinese festivals by public-api
+2. support tree header slot
+3. drag gantt node to modify dates
+4. drag to modify duration
+5. jump to 'today'
+6. col unit base on days or weeks or months
+7. monthly view hover node to display date info
+8. click tree node to jump to gantt node
+9. click milestone's line to jump to milestone node
+10. get chinese festivals by public-api
 
 [⬆ Back to Top](#table-of-contents)
 

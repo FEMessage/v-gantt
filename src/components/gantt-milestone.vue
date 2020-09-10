@@ -2,7 +2,8 @@
   <div
     class="gantt-milestone"
     @mousedown.stop="$emit('drag-start', $event)"
-    @click.stop="$emit('focus-start')"
+    @mouseover.stop="$emit('hover-start')"
+    @mouseout.stop="$emit('hover-end')"
   >
     <div v-if="data.done" class="content done">
       <svg class="icon" viewBox="0 0 16 16" fill="white">
@@ -78,6 +79,18 @@ export default Vue.extend({
     white-space: nowrap;
     text-overflow: ellipsis;
     user-select: none;
+  }
+}
+
+.gantt-milestone.is-month-view {
+  .content {
+    width: 12px;
+    height: 12px;
+    box-sizing: border-box;
+
+    &.done .icon {
+      width: 10px;
+    }
   }
 }
 </style>
