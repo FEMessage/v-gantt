@@ -4,12 +4,19 @@
     v-bind="$props"
     :class="[
       'gantt-node',
-      { moving: dragData.dragging || resizeData.resizing, focusing },
+      {
+        moving: dragData.dragging || resizeData.resizing,
+        'is-month-view': isMonthView,
+        focusing,
+        hovering,
+      },
     ]"
     :style="style"
     @drag-start="onDragStart"
     @resize-start="onResizeStart"
     @focus-start="startFocus"
+    @hover-start="startHover"
+    @hover-end="endHover"
   />
 </template>
 <script lang="ts">
@@ -17,7 +24,7 @@ import Vue, { PropType } from 'vue'
 import GanttGroup from './gantt-group.vue'
 import GanttLeaf from './gantt-leaf.vue'
 import GanttMilestone from './gantt-milestone.vue'
-import { GanttLayoutNode, Bus } from '@/utils/types'
+import { GanttLayoutNode, Bus, ColUnit } from '@/utils/types'
 import { isGroup, isMilestone } from '@/utils'
 
 interface Style {
@@ -52,6 +59,8 @@ export default Vue.extend({
       offsetX: 0,
     },
     focusing: false,
+    hovering: false,
+    otherWorking: false,
   }),
   computed: {
     component(): Vue.VueConstructor {
@@ -81,12 +90,8 @@ export default Vue.extend({
         height: h + 'px',
       }
     },
-  },
-  created() {
-    const { ee } = this.bus
-    ee.on(ee.Event.ScrollToNode, (id: string) => {
-      if (id !== this.data.id) return
-      let { x, y } = this.dataInPx
+    absolutePosition() {
+      let { x, y } = (this as any).dataInPx
       const { rowH } = this.bus
       let node: any = this.$parent
       // 统计到顶级 layout 的距离
@@ -99,6 +104,19 @@ export default Vue.extend({
         }
         node = node.$parent
       }
+
+      return { x, y }
+    },
+    isMonthView() {
+      return this.bus.colUnit === ColUnit.Month
+    },
+  },
+  created() {
+    const { ee } = this.bus
+    ee.on(ee.Event.ScrollToNode, (id: string) => {
+      if (id !== this.data.id) return
+      const { x, y } = this.absolutePosition
+
       ee.emit(ee.Event.ScrollTo, { x: x - 200, y: y - 150 })
       this.startFocus()
     })
@@ -108,6 +126,20 @@ export default Vue.extend({
       } else {
         this.focus()
       }
+    })
+
+    ee.on(ee.Event.DragStart, ({ id }: { id: string }) => {
+      this.otherWorking = id !== this.data.id
+    })
+    ee.on(ee.Event.DragEnd, () => {
+      this.otherWorking = false
+    })
+
+    ee.on(ee.Event.ResizeStart, ({ id }: { id: string }) => {
+      this.otherWorking = id !== this.data.id
+    })
+    ee.on(ee.Event.ResizeEnd, () => {
+      this.otherWorking = false
     })
   },
   methods: {
@@ -125,6 +157,10 @@ export default Vue.extend({
       const { ee } = this.bus
       ee.emit(ee.Event.Drag, {
         movedCols: dividedBy(this.dragData.offsetX, this.bus.colW),
+        dataInPx: {
+          ...this.dataInPx,
+          ...this.absolutePosition,
+        },
       })
     },
     onDragEnd() {
@@ -147,12 +183,14 @@ export default Vue.extend({
     },
     onResize(e: MouseEvent) {
       this.resizeData.offsetX += e.movementX
+
       const { ee } = this.bus
       ee.emit(ee.Event.Resize, {
         resizedCols: Math.max(
           1 - this.data.w, // 至少一列
           dividedBy(this.resizeData.offsetX, this.bus.colW),
         ),
+        dataInPx: this.dataInPx,
       })
     },
     onResizeEnd() {
@@ -170,6 +208,28 @@ export default Vue.extend({
     startFocus() {
       const { ee } = this.bus
       ee.emit(ee.Event.Focus, this.data.id)
+    },
+    startHover() {
+      // 仅 month 视图开启悬浮显示日期
+      if (this.bus.colUnit !== ColUnit.Month) return
+
+      // 其他节点正在 drag 或者 resize 的时候，不能 hover
+      if (this.otherWorking) return
+
+      const { ee } = this.bus
+      ee.emit(ee.Event.StartHover, {
+        id: this.data.id,
+        w: this.dataInPx.w,
+        ...this.absolutePosition,
+      })
+
+      this.hovering = true
+    },
+    endHover() {
+      const { ee } = this.bus
+      ee.emit(ee.Event.EndHover)
+
+      this.hovering = false
     },
     focus() {
       this.focusing = true
@@ -195,7 +255,8 @@ export default Vue.extend({
   }
 
   &.moving,
-  &.focusing {
+  &.focusing,
+  &.hovering {
     &::before {
       content: '';
       position: absolute;

@@ -106,6 +106,21 @@ export interface Bus {
 }
 
 export enum ColUnit {
-  Day,
-  Week,
+  Day = 'day',
+  Week = 'week',
+  Month = 'month',
+}
+
+type HoveringNodeDate = {
+  start: string
+  end: string
+}
+
+export interface HoveringNode {
+  isMilestone: boolean
+  visible: boolean
+  left: number
+  width: number
+  originDate: HoveringNodeDate
+  date: HoveringNodeDate
 }

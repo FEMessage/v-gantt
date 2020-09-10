@@ -3,6 +3,8 @@
     class="gantt-leaf"
     @mousedown.stop="$emit('drag-start', $event)"
     @click.stop="$emit('focus-start')"
+    @mouseover.stop="$emit('hover-start')"
+    @mouseout.stop="$emit('hover-end')"
   >
     <gantt-progress :progress="data.progress" />
     <div class="drag-handle" @mousedown.stop="$emit('resize-start', $event)">

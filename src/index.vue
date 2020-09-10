@@ -140,10 +140,10 @@ export default Vue.extend({
     },
     /**
      * 默认视图
-     * @values day, week
+     * @values day, week, month
      */
     view: {
-      type: String,
+      type: String as PropType<ColUnit>,
       default: 'day',
     },
     /**
@@ -178,6 +178,8 @@ export default Vue.extend({
         switch (colUnit) {
           case ColUnit.Week:
             return _colW * 0.5
+          case ColUnit.Month:
+            return _colW * 0.2
           case ColUnit.Day:
           default:
             return _colW
@@ -209,20 +211,17 @@ export default Vue.extend({
   },
   methods: {
     initBus() {
-      const getUnit = (v: string) => (v === 'day' ? ColUnit.Day : ColUnit.Week)
       Object.assign(this.bus, {
         rowH: this.rowH,
         _colW: this.colW,
         collapsedMap: this.collapsedMap,
-        colUnit: getUnit(this.view),
+        colUnit: this.view,
       })
       this.$watch('rowH', (v) => (this.bus.rowH = v))
       this.$watch('colW', (v) => (this.bus._colW = v))
       this.$watch('collapsedMap', (v) => (this.bus.collapsedMap = v))
-      this.$watch('view', (v) => (this.bus.colUnit = getUnit(v)))
-      this.$watch('bus.colUnit', (u) =>
-        this.$emit('update:view', u === ColUnit.Day ? 'day' : 'week'),
-      )
+      this.$watch('view', (v) => (this.bus.colUnit = v))
+      this.$watch('bus.colUnit', (u) => this.$emit('update:view', u))
       const { ee } = this.bus
       ee.on(ee.Event.DragStart, this.onDragStart)
       ee.on(ee.Event.Drag, this.onDrag)

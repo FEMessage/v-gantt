@@ -3,10 +3,26 @@
     <div ref="xScrollContainer" class="x-scroll-container">
       <section class="content" :style="contentStyle">
         <header>
-          <section v-if="weekMode" class="weeks">
+          <section v-if="monthMode" class="months">
+            <div
+              v-for="m in months"
+              :key="m"
+              :class="[
+                'month',
+                {
+                  // month 视图实现跳转到今天，实际上只需要跳到当前月即可
+                  'date today': isCurrentMonth(m),
+                },
+              ]"
+              :style="monthStyle(m)"
+            >
+              {{ m }}
+            </div>
+          </section>
+          <section v-else-if="weekMode" class="weeks">
             <div v-for="w in weeks" :key="w" class="week">{{ w }}</div>
           </section>
-          <section class="dates">
+          <section class="dates" v-if="dayMode || weekMode">
             <div
               v-for="d in dates"
               :key="d"
@@ -38,6 +54,19 @@
               ></div>
             </div>
           </section>
+          <div
+            :class="[
+              'hovering-node-date',
+              { 'is-milestone': !hoveringNode.date.end },
+            ]"
+            v-if="hoveringNode.visible"
+            :style="hoveringNodeStyle"
+          >
+            <span>{{ hoveringNode.date.start | formatDate }}</span>
+            <span v-if="hoveringNode.date.end">{{
+              hoveringNode.date.end | formatDate
+            }}</span>
+          </div>
         </header>
         <div
           ref="yScrollContainer"
@@ -70,6 +99,7 @@
 </template>
 <script lang="ts">
 import Vue, { PropType } from 'vue'
+import _uniq from 'lodash.uniq'
 import GanttLayout from './gantt-layout.vue'
 import {
   GanttData,
@@ -79,8 +109,9 @@ import {
   Bus,
   ColUnit,
   GanttMilestone,
+  HoveringNode,
 } from '@/utils/types'
-import { isGroup, isMilestone } from '@/utils'
+import { isGroup, isMilestone, search } from '@/utils'
 import dayjs from '@/utils/day'
 import { DayData, getWeekdays, isRestDay } from '@/utils/weekday'
 
@@ -93,7 +124,16 @@ const colUnitOptions = [
     label: '周',
     value: ColUnit.Week,
   },
+  {
+    label: '月',
+    value: ColUnit.Month,
+  },
 ]
+
+const dateMinWidth = {
+  milestone: 100,
+  other: 160,
+}
 
 function transform(
   ganttData: GanttData,
@@ -164,12 +204,16 @@ interface ContentStyle {
   backgroundSize: string
 }
 
+interface MonthStyle {
+  width: string
+}
+
 /**
  * 根据以下条件，返回列的时间范围
  * - 所有节点的最早开始时间 & 最晚结束时间
  * - 列模式
  */
-function getRange(data: GanttData) {
+function getRange(data: GanttData, colUnit: ColUnit = ColUnit.Day) {
   let startDate: string | undefined
   let endDate: string | undefined
   function loop(d: GanttData | GanttNode) {
@@ -193,21 +237,41 @@ function getRange(data: GanttData) {
     }
   }
   loop(data)
-  /**
-   * 起始总是从周一开始
-   * 方便 week 视图数据处理
-   */
-  startDate = dayjs(startDate)
-    .$day(1)
-    .$format()
-  /**
-   * 末尾持续到几天后的那一周日。同样是方便周视图处理
-   * HACK: 这里和 gantt-milestone 组件还略有关系；因为该组件允许里程碑标题超出组件宽度限制，所以如果末尾留的位置不够，会导致 x-scroll-container 横向滚动出 bug
-   */
-  endDate = dayjs(endDate)
-    .add(3, 'day')
-    .$day(7)
-    .$format()
+
+  switch (colUnit) {
+    case ColUnit.Month:
+      /**
+       * 起始总是从月初开始
+       * 方便 month 视图数据处理
+       */
+      startDate = dayjs(startDate)
+        .startOf('month')
+        .$format()
+      /**
+       * 末尾持续到几天后的月尾。同样是方便 month 视图处理
+       * HACK: 这里和 gantt-milestone 组件还略有关系；因为该组件允许里程碑标题超出组件宽度限制，所以如果末尾留的位置不够，会导致 x-scroll-container 横向滚动出 bug
+       */
+      endDate = dayjs(endDate)
+        .add(3, 'day')
+        .endOf('month')
+        .$format()
+      break
+
+    default:
+      /**
+       * 理由同上
+       */
+      startDate = dayjs(startDate)
+        .$day(1)
+        .$format()
+
+      endDate = dayjs(endDate)
+        .add(3, 'day')
+        .$day(7)
+        .$format()
+      break
+  }
+
   return [startDate!, endDate!]
 }
 
@@ -243,9 +307,18 @@ function complementRange(range: string[], startDate: string, endDate: string) {
   }
 }
 
+const today = dayjs().$format()
+
 export default Vue.extend({
   name: 'GanttChart',
   components: { GanttLayout },
+  filters: {
+    formatDate(date: string) {
+      return dayjs(today).year() === dayjs(date).year()
+        ? dayjs(date).format('MM-DD')
+        : date
+    },
+  },
   props: {
     bus: {
       type: Object as PropType<Bus>,
@@ -273,7 +346,15 @@ export default Vue.extend({
     years: new Set<string | number>(),
     dates: [] as string[],
     colUnitOptions,
-    today: dayjs().$format(),
+    today,
+    hoveringNode: {
+      isMilestone: false,
+      visible: false,
+      left: 0,
+      width: 0,
+      originDate: { start: '', end: '' },
+      date: { start: '', end: '' },
+    } as HoveringNode,
   }),
   computed: {
     hasToday(): boolean {
@@ -295,20 +376,23 @@ export default Vue.extend({
     weekMode(): boolean {
       return this.colUnit === ColUnit.Week
     },
+    monthMode(): boolean {
+      return this.colUnit === ColUnit.Month
+    },
     weeks(): string[] {
-      switch (this.colUnit) {
-        case ColUnit.Week: {
-          const { dates } = this
-          const result = []
-          for (let i = 0; i < dates.length; i += 7) {
-            result.push(`${dates[i]} ~ ${dates[i + 6]}`)
-          }
-          return result
-        }
-        case ColUnit.Day:
-        default:
-          return []
+      const { dates } = this
+      const result = []
+      for (let i = 0; i < dates.length; i += 7) {
+        result.push(`${dates[i]} ~ ${dates[i + 6]}`)
       }
+      return result
+    },
+    months(): string[] {
+      const { dates } = this
+      const months = dates.map((d) => dayjs(d).format('YYYY-MM'))
+      const result = _uniq(months)
+
+      return result
     },
     contentStyle(): ContentStyle {
       const { colW } = this.bus
@@ -318,14 +402,38 @@ export default Vue.extend({
       }
       if (this.colUnit === ColUnit.Week) {
         result.backgroundSize = colW * 7 + 'px'
+      } else if (this.colUnit === ColUnit.Month) {
+        // 因为每月的天数是不固定的，所以不使用 background-size 的方式
+        result.backgroundSize = '0px'
       }
       return result
+    },
+    monthStyle(): (m: string) => MonthStyle {
+      // 月的宽度根据当月的天数决定
+      const { colW } = this.bus
+
+      return (m: string) => {
+        const numberOfDays = this.dates.filter((d) => d.startsWith(m)).length
+
+        return {
+          width: colW * numberOfDays + 'px',
+        }
+      }
+    },
+    hoveringNodeStyle() {
+      return {
+        left: this.hoveringNode.left + 'px',
+        width: this.hoveringNode.width + 'px',
+      }
     },
     layoutData(): GanttLayoutData {
       return transform(this.data, this.dates, this.bus.collapsedMap)
     },
     isToday(): (date: string) => boolean {
       return (date: string) => this.today === date
+    },
+    isCurrentMonth(): (month: string) => boolean {
+      return (month: string) => dayjs(this.today).format('YYYY-MM') === month
     },
     dragPosition(): Set<string> {
       const set = new Set<string>()
@@ -398,6 +506,8 @@ export default Vue.extend({
       immediate: true,
     },
     colUnit() {
+      // 不同的视图需要展示的日期范围可能是不同的，所以切换视图时重置
+      this.dates = []
       this.complementDates()
     },
   },
@@ -434,13 +544,125 @@ export default Vue.extend({
       }
       scroll()
     })
+
+    ee.on(ee.Event.StartHover, ({ id, x, w }: any) => {
+      const [node] = search(id, this.data) as [GanttNode]
+
+      let minWidth = dateMinWidth.other // 给定一个最小宽度，否则日期比较长时无法正常展示
+      let date = {} as HoveringNode['originDate']
+
+      let aIsMilestone = false
+
+      if (isMilestone(node)) {
+        minWidth = dateMinWidth.milestone
+        date.start = node.date
+        aIsMilestone = true
+      } else {
+        date = {
+          start: node.startDate,
+          end: node.endDate,
+        }
+      }
+
+      const width = w < minWidth ? minWidth : w
+
+      // 使居中
+      const left = x - (width - w) / 2
+
+      this.hoveringNode = {
+        isMilestone: aIsMilestone,
+        visible: true,
+        left,
+        width,
+        originDate: { ...date },
+        date,
+      }
+    })
+
+    ee.on(ee.Event.EndHover, () => {
+      this.hoveringNode.visible = false
+    })
+
+    ee.on(
+      ee.Event.Drag,
+      ({
+        movedCols,
+        dataInPx,
+      }: {
+        movedCols: number
+        dataInPx: { [key: string]: number }
+      }) => {
+        if (!this.monthMode) return
+
+        const minWidth =
+          dateMinWidth[this.hoveringNode.isMilestone ? 'milestone' : 'other']
+
+        const date = this.hoveringNode.date
+
+        date.start = dayjs.$add(this.hoveringNode.originDate.start, movedCols)
+
+        if (!this.hoveringNode.isMilestone) {
+          date.end = dayjs.$add(this.hoveringNode.originDate.end, movedCols)
+        }
+
+        const width = dataInPx.w < minWidth ? minWidth : dataInPx.w
+        const left = dataInPx.x - (width - dataInPx.w) / 2
+
+        this.hoveringNode = {
+          ...this.hoveringNode,
+          visible: true, // drag 时即便不再 hover 也依然显示当前节点日期
+          width,
+          left,
+          date,
+        }
+      },
+    )
+
+    ee.on(
+      ee.Event.Resize,
+      ({
+        resizedCols,
+        dataInPx,
+      }: {
+        resizedCols: number
+        dataInPx: { [key: string]: number }
+      }) => {
+        if (!this.monthMode) return
+
+        const date = this.hoveringNode.date
+
+        if (this.hoveringNode.isMilestone) {
+          date.start = dayjs.$add(
+            this.hoveringNode.originDate.start,
+            resizedCols,
+          )
+        } else {
+          date.end = dayjs.$add(this.hoveringNode.originDate.end, resizedCols)
+        }
+
+        this.hoveringNode = {
+          ...this.hoveringNode,
+          visible: true, // resize 时即便不再 hover 也依然显示当前节点日期
+          width: dataInPx.w,
+          date,
+        }
+      },
+    )
+
+    ee.on(ee.Event.DragEnd, () => {
+      this.hoveringNode.visible = false
+    })
+
+    ee.on(ee.Event.ResizeEnd, () => {
+      this.hoveringNode.visible = false
+    })
   },
   methods: {
     complementDates() {
       const { data } = this
       if (!data.length) return
       // FIXME: 应当限制日期最长范围，防止程序崩溃。需要进行性能测试
-      const [startDate, endDate] = getRange(data)
+      const [startDate, endDate] = getRange(data, this.colUnit)
       complementRange(this.dates, startDate, endDate)
     },
     isRestDay(date: string) {
@@ -515,12 +737,43 @@ export default Vue.extend({
     padding-bottom: 20px;
 
     header {
+      position: relative;
       height: @header-height;
       display: flex;
       flex-direction: column;
       font-size: 14px;
       border-bottom: 1px solid @borderColor;
       user-select: none; // HACK: resize 时会莫名选中标题
+
+      .months {
+        flex: 1 0 50%;
+        width: 100%;
+        display: flex;
+        font-size: 14px;
+        border-bottom: 1px solid @borderColor;
+
+        .month {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+
+          // month 视图使用伪类实现分割线
+          &::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 1px;
+            height: 100vh;
+            background: linear-gradient(
+              to left,
+              rgba(0, 0, 0, 0.1) 1px,
+              transparent 1px
+            );
+          }
+        }
+      }
 
       .weeks {
         flex: 1 0 50%;
@@ -556,11 +809,12 @@ export default Vue.extend({
             position: absolute;
             bottom: 0;
             left: 0;
-            transform: scale(0.7);
+            transform: scale(0.8);
             width: 100%;
-            transform-origin: 50% 100%;
+            transform-origin: 50%;
             opacity: 0.8;
             text-align: center;
+            font-size: 12px;
           }
 
           // mixin
@@ -626,6 +880,23 @@ export default Vue.extend({
             transform-origin: 100% 0;
             line-height: 1;
           }
+        }
+      }
+
+      .hovering-node-date {
+        box-sizing: border-box;
+        position: absolute;
+        background: @progress-content;
+        border-radius: 3px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        padding: 2px 5px;
+        bottom: 0;
+        font-size: 13px;
+
+        &.is-milestone {
+          justify-content: center;
         }
       }
     }
