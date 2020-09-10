@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.3.0](https://github.com/FEMessage/v-gantt/compare/v1.2.0...v1.3.0) (2020-09-10)
+
+
+### Features
+
+* support monthly view ([#18](https://github.com/FEMessage/v-gantt/issues/18)) ([5ccc1e7](https://github.com/FEMessage/v-gantt/commit/5ccc1e7e30d206a2ade0a24466a143b0d01f6682))
+
 ## [1.2.0](https://github.com/FEMessage/v-gantt/compare/v1.1.4...v1.2.0) (2020-09-01)
 
 
