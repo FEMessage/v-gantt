@@ -106,7 +106,7 @@ yarn dev
 - 修复更改 rowH 时未改变树节点高度的问题
 - 支持进度修改功能
 - 支持修改里程碑完成状态
-- 修复使用 rollup 打包时，<gantt-group> 组件丢失对 <gantt-layout> 的引用的问题
+- 修复使用 rollup 打包时，`<gantt-group>` 组件丢失对 `<gantt-layout>` 的引用的问题
 
 [⬆ Back to Top](#table-of-contents)
 
