@@ -151,12 +151,12 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/donaldshen"><img src="https://avatars3.githubusercontent.com/u/19591950?v=4" width="100px;" alt=""/><br /><sub><b>Donald Shen</b></sub></a><br /><a href="https://github.com/FEMessage/v-gantt/commits?author=donaldshen" title="Code">💻</a> <a href="#blog-donaldshen" title="Blogposts">📝</a> <a href="#tool-donaldshen" title="Tools">🔧</a> <a href="#design-donaldshen" title="Design">🎨</a></td>
+    <td align="center"><a href="https://4ark.me"><img src="https://avatars0.githubusercontent.com/u/27952659?v=4" width="100px;" alt=""/><br /><sub><b>4Ark</b></sub></a><br /><a href="https://github.com/FEMessage/v-gantt/commits?author=gd4Ark" title="Documentation">📖</a> <a href="#maintenance-gd4Ark" title="Maintenance">🚧</a></td>
   </tr>
 </table>
 
 <!-- markdownlint-enable -->
 <!-- prettier-ignore-end -->
-
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
