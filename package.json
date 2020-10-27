@@ -25,6 +25,7 @@
   "browser": {
     "./sfc": "src/index.vue"
   },
+  "types": "src/index.d.ts",
   "scripts": {
     "dev": "vue-cli-service styleguidist",
     "build": "yarn build:umd & yarn build:esm & yarn doc",
