@@ -2,6 +2,39 @@
 const path = require('path')
 const glob = require('glob')
 
+const sections = (() => {
+  const docs = glob
+    .sync('docs/*.md')
+    .map((p) => ({ name: path.basename(p, '.md'), content: p }))
+  const demos = []
+  let faq = '' // 约定至多只有一个faq.md
+  const guides = []
+  docs.forEach((d) => {
+    if (/^faq$/i.test(d.name)) {
+      d.name = d.name.toUpperCase()
+      faq = d
+    } else if (/^guide-/.test(d.name)) {
+      guides.push(d)
+    } else {
+      demos.push(d)
+    }
+  })
+  return [
+    {
+      name: 'Components',
+      components: 'src/index.vue',
+      usageMode: 'expand',
+    },
+    {
+      name: 'Demo',
+      sections: demos,
+      sectionDepth: 2,
+    },
+    ...(faq ? [faq] : []),
+    ...(guides.length ? [{ name: 'Guide', sections: guides }] : []),
+  ]
+})()
+
 module.exports = {
   title: 'v-gantt 文档',
   styleguideDir: 'docs',
@@ -11,19 +44,7 @@ module.exports = {
     url: 'https://github.com/FEMessage/v-gantt',
   },
   require: ['./styleguide.config.extra.js'],
-  sections: [
-    {
-      name: 'Components',
-      components: 'src/index.vue',
-      usageMode: 'expand',
-    },
-    {
-      name: 'Demo',
-      sections: glob
-        .sync('docs/*.md')
-        .map((p) => ({ name: path.basename(p, '.md'), content: p })),
-    },
-  ],
+  sections,
   exampleMode: 'expand',
   dangerouslyUpdateWebpackConfig(webpackConfig) {
     /**
