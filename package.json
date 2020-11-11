@@ -1,6 +1,6 @@
 {
   "name": "@femessage/v-gantt",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "vue gantt component, just like omniplan!",
   "license": "MIT",
   "repository": {
